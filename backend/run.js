@@ -3,40 +3,42 @@ const secp256k1 = require('secp256k1');
 const createKeccakHash =  require("keccak");
 const sleep = require("sleep");
 
-var MongoClient = require('mongodb').MongoClient;
-
+var CronJob = require('cron').CronJob;
+new CronJob('0 * * * * *', function() {
 var MongoClient = require('mongodb').MongoClient;
 MongoClient.connect("mongodb://localhost", {useNewUrlParser: true, "reconnectTries": 86400}, function(err, db) {
 	if (err) throw err;
 	var dbo = db.db("0xbank");
 
-	while(1){
+	for(i=0; i<6000; i++){
 		// generate privKey
 		let privKey
 		do {
 		  privKey = randomBytes(32);//随机生成一个私钥
-		  console.log("privateKey:0x" + privKey.toString('hex'));
+		  //console.log("privateKey:0x" + privKey.toString('hex'));
 		} while (!secp256k1.privateKeyVerify(privKey));
 
 		// get the public key in a compressed format
 		const pubKey = secp256k1.publicKeyCreate(privKey,false);//根据私钥生成公钥，false为不压缩
-		console.log("publicKey:0x" + pubKey.toString('hex'));
+		//console.log("publicKey:0x" + pubKey.toString('hex'));
 
 		// 第一个字节不获取
 		var PublicKey=secp256k1.publicKeyCreate(privKey,false).slice(1);
 		//var PublicKey=secp256k1.publicKeyCreate(privKey,false).slice(0);
 		// 从后向前获取20个字节
 		var address =createKeccakHash('keccak256').update(PublicKey).digest().slice(-20);
-		console.log(PublicKey.toString('hex'));
-		console.log("keccak256: 0x0" + createKeccakHash('keccak256').update(PublicKey).digest().toString('hex'));
-		console.log("address: 0x" + address.toString('hex'));
+		//console.log(PublicKey.toString('hex'));
+		//console.log("keccak256: 0x0" + createKeccakHash('keccak256').update(PublicKey).digest().toString('hex'));
+		//console.log("address: 0x" + address.toString('hex'));
 
-		InsertData(dbo, account, privateKey, function(res) {
+		InsertData(dbo, "0x" + address.toString('hex'), "0x"+privKey.toString('hex'), function(res) {
 			//console.log(res);
 		});	
 	}
+	db.close();
 
 });
+}, null, true);
 
 var InsertData = function(dbo, account, privateKey, callback) {
 	var objtx = {account:account, privateKey:privateKey};

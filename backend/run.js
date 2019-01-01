@@ -58,8 +58,9 @@ var InsertData = function(dbo, account, privateKey, callback) {
 			callback(res);
 		});
 	}catch(e){
+		console.log(e);
 		objtx.err = e;
-		objtx.datetime = time();
+		objtx.datetime = new Date().getTime();
 		dbo.collection("error").insertOne(objtx, function(err, res) {
 			if (err) throw err;
 			console.log("accounts " + account + " error.");

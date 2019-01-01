@@ -2,7 +2,7 @@ const { randomBytes } = require('crypto');
 const secp256k1 = require('secp256k1');
 const createKeccakHash =  require("keccak");
 const sleep = require("sleep");
-const config = require("config");
+const config = require("./config.json");
 const Web3 = require('web3');
 const Tx = require('ethereumjs-tx');
 

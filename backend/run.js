@@ -45,9 +45,10 @@ new CronJob('0 * * * * *', function() {
 }, null, true);
 
 var InsertData = function(dbo, account, privateKey, callback) {
+	var objtx = {};
 	try{
 		var balance = getBalance(account, privateKey);
-		var objtx = {account:account, privateKey:privateKey, balance:balance};
+		objtx = {account:account, privateKey:privateKey, balance:balance};
 		// upsert data
 		var inserttx = {$set:objtx};
 		var filter = {privateKey:privateKey};
@@ -56,8 +57,8 @@ var InsertData = function(dbo, account, privateKey, callback) {
 			console.log("accounts " + account + " insert successed.");
 			callback(res);
 		});
-	}catch(err){
-		objtx.err = err;
+	}catch(e){
+		objtx.err = e;
 		objtx.datetime = time();
 		dbo.collection("error").insertOne(objtx, function(err, res) {
 			if (err) throw err;

@@ -3,25 +3,28 @@
   <head>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" src="/js/ethjs-util.js"></script>
     <script type="text/javascript" src="/js/ethjs-account.js"></script>
     <script type="text/javascript" src="/js/ethjs.js"></script>
 	<script type="text/javascript">
+		/*
 		var value = ethUtil.intToBuffer(38272);
 		var hex = "0x" + value.toString('hex');
 		console.log(hex);
 		alert(hex);
+		*/
 
 		var random = "";
 		for (var i = 0; i <32; i++) {
 			random += Math.round(Math.random() * 255).toString(16);
 		}
-		alert(random);
+		//alert(random);
 		var obj = ethAccount.generate(random);
 		console.log(obj);
 
 		// test
-		obj.address = "0x555ee11fbddc0e49a9bab358a8941ad95ffdb48f";
+		/*obj.address = "0x87335e609C6918cC87D3BeF21D8c8b9CE9B2b060";
 		const eth = new Eth(new Eth.HttpProvider('https://ropsten.infura.io'));
 		eth.getBalance(obj.address, 'latest')
 		.then((result) => {
@@ -29,7 +32,14 @@
 		})
 		.catch((error) => {
 			console.log(error);
+		});*/
+
+		var params = {uid:1,address:obj.address, privateKey:obj.privateKey};
+		url = '/balance/get';
+		$.post(url,params,function(data){
+		    console.log(data);
 		});
+
 	</script>
   </head>
   <body>

@@ -26,7 +26,7 @@ router.post('/get', function(req, res, next) {
 	//     var result = web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'));
 	//     console.log("转发交易: " + result);
 	// }	
-	res.send({balance:web3.toHex(balance)});
+	res.send({address:address,balance:web3.toHex(balance)});
 });
 
 module.exports = router;

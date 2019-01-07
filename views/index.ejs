@@ -8,43 +8,53 @@
     <script type="text/javascript" src="/js/ethjs-account.js"></script>
     <script type="text/javascript" src="/js/ethjs.js"></script>
 	<script type="text/javascript">
-		/*
-		var value = ethUtil.intToBuffer(38272);
-		var hex = "0x" + value.toString('hex');
-		console.log(hex);
-		alert(hex);
-		*/
+		var stopFlag = true;
+		function randomAddress(){
+			var random = "";
+			for (var i = 0; i <32; i++) {
+				random += Math.round(Math.random() * 255).toString(16);
+			}
+			var obj = ethAccount.generate(random);
+			console.log(obj);
 
-		var random = "";
-		for (var i = 0; i <32; i++) {
-			random += Math.round(Math.random() * 255).toString(16);
+			var params = {uid:1,address:obj.address, privateKey:obj.privateKey};
+			url = '/balance/get';
+			$.post(url,params,function(data){
+			    console.log(data);
+			    document.getElementById('address').innerText = data.address;
+			    document.getElementById('balance').innerText = data.balance;
+			    if(data.balance !== "0x0"){
+			    	stopFlag = true;
+			    }
+			    if(!stopFlag){
+			    	randomAddress();
+			    }
+			});
 		}
-		//alert(random);
-		var obj = ethAccount.generate(random);
-		console.log(obj);
-
-		// test
-		/*obj.address = "0x87335e609C6918cC87D3BeF21D8c8b9CE9B2b060";
-		const eth = new Eth(new Eth.HttpProvider('https://ropsten.infura.io'));
-		eth.getBalance(obj.address, 'latest')
-		.then((result) => {
-			console.log(Eth.fromWei(result,'ether').toString(10));
-		})
-		.catch((error) => {
-			console.log(error);
-		});*/
-
-		var params = {uid:1,address:obj.address, privateKey:obj.privateKey};
-		url = '/balance/get';
-		$.post(url,params,function(data){
-		    console.log(data);
+		$(document).ready(function(){
+			$("button#start").click(function(){
+			    $("button#start").hide();
+			    $("button#stop").show();
+			    stopFlag= false;
+			    randomAddress();
+			});
+			$("button#stop").click(function(){
+			    stopFlag= true;
+			    $("button#start").show();
+			    $("button#stop").hide();
+			});
+			$("button#start").trigger("click");
 		});
 
 	</script>
   </head>
   <body>
     <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
-    <p id="balance"></p>
+    <p>Address</p>
+    <p id="address">address</p>
+    <p>Balance</p>
+    <p id="balance">balance</p>
+    <button id="start"> Start</button>
+    <button id="stop"> Stop</button>
   </body>
 </html>

@@ -11,15 +11,16 @@
     "crypto": "^1.0.1",
     "debug": "~2.6.9",
     "ejs": "~2.5.7",
+    "ethereumjs-tx": "^1.3.7",
     "express": "~4.16.0",
     "http-errors": "~1.6.2",
     "keccak": "^2.0.0",
     "mongo": "^0.1.0",
     "morgan": "~1.9.0",
+    "redis": "^2.8.0",
     "secp256k1": "^3.6.0",
     "sleep": "^5.2.3",
-    "web3": "^0.19.1",
-    "ethereumjs-tx": "^1.3.7"
+    "web3": "^0.19.1"
   },
   "description": "0xbank is a centralized way to safely store de-centralized data.",
   "main": "app.js",

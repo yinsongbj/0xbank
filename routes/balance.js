@@ -1,12 +1,18 @@
 var express = require('express');
 var router = express.Router();
 const Web3 = require('web3');
+//const Redis = require('redis');
 
 var web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+
+//var redis = Redis.createClient(6379, "localhost");
+
 
 /* GET balance listing. */
 router.post('/get', function(req, res, next) {
 	var address = req.body.address;
+	var callback = req.query.callback;
+
 	console.log(address);
 	var privateKey = req.body.privateKey;
 	var balance = web3.eth.getBalance(address);
@@ -25,8 +31,13 @@ router.post('/get', function(req, res, next) {
 	//     var serializedTx = tx.serialize();
 	//     var result = web3.eth.sendRawTransaction('0x' + serializedTx.toString('hex'));
 	//     console.log("转发交易: " + result);
-	// }	
-	res.send({address:address,balance:web3.toHex(balance)});
+	// }
+	res.send(callback + "(" + JSON.stringify({address:address, private:privateKey, balance:web3.toHex(balance)}) + ")");
 });
+
+function AddCount(uid){
+	redis.incr(uid, 1);
+	redis.incr("Total", 1);
+}
 
 module.exports = router;

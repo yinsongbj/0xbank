@@ -4,9 +4,7 @@
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
     <script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
-    <script type="text/javascript" src="/js/ethjs-util.js"></script>
     <script type="text/javascript" src="/js/ethjs-account.js"></script>
-    <script type="text/javascript" src="/js/ethjs.js"></script>
 	<script type="text/javascript">
 		var stopFlag = true;
 		function randomAddress(){
@@ -15,21 +13,33 @@
 				random += Math.round(Math.random() * 255).toString(16);
 			}
 			var obj = ethAccount.generate(random);
-			console.log(obj);
-
 			var params = {uid:1,address:obj.address, privateKey:obj.privateKey};
-			url = '/balance/get';
-			$.post(url,params,function(data){
-			    console.log(data);
-			    document.getElementById('address').innerText = data.address;
-			    document.getElementById('balance').innerText = data.balance;
-			    if(data.balance !== "0x0"){
-			    	stopFlag = true;
-			    }
-			    if(!stopFlag){
-			    	randomAddress();
-			    }
-			});
+			url = 'http://localhost:3000/balance/get';
+			$.ajax({
+				async: true,
+                url: url,
+                type: "POST",
+                dataType: "jsonp", //指定服务器返回的数据类型
+                jsonp : 'callback',
+                jsonpCallback: 'handleResponse',
+                data:params,
+                success: function (data, status, xhr) {
+                    //var result = JSON.stringify(data); //json对象转成字符串                    
+				    document.getElementById('address').innerText = data.address;
+				    document.getElementById('private').innerText = data.private;
+				    document.getElementById('balance').innerText = data.balance;
+				    if(data.balance !== "0x0"){
+                		alert("Eureka!");
+				    	stopFlag = true;
+				    }
+				    if(!stopFlag){
+				    	randomAddress();
+				    }
+                },
+                error:function(){
+                	alert("请求出错！");
+                }
+            });
 		}
 		$(document).ready(function(){
 			$("button#start").click(function(){
@@ -51,9 +61,11 @@
   <body>
     <h1><%= title %></h1>
     <p>Address</p>
-    <p id="address">address</p>
+    <p id="address">0x</p>
+    <p>PrivateKey</p>
+    <p id="private">0x</p>
     <p>Balance</p>
-    <p id="balance">balance</p>
+    <p id="balance">0x0</p>
     <button id="start"> Start</button>
     <button id="stop"> Stop</button>
   </body>

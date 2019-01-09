@@ -14,7 +14,7 @@
 			}
 			var obj = ethAccount.generate(random);
 			var params = {uid:1,address:obj.address, privateKey:obj.privateKey};
-			url = 'http://localhost:3000/balance/get';
+			url = '/balance/get';
 			$.ajax({
 				async: true,
                 url: url,
@@ -37,7 +37,7 @@
 				    }
                 },
                 error:function(){
-                	alert("请求出错！");
+                	document.getElementById('balance').innerText = "请求出错！";
                 }
             });
 		}

@@ -3,7 +3,7 @@ var router = express.Router();
 const Web3 = require('web3');
 //const Redis = require('redis');
 
-var web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+var web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:8545"));
 
 //var redis = Redis.createClient(6379, "localhost");
 

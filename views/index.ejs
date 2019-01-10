@@ -5,8 +5,10 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
     <script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" src="/js/ethjs-account.js"></script>
+    <script type="text/javascript" src="/js/ethjs.js"></script>
 	<script type="text/javascript">
 		var stopFlag = true;
+		const eth = new Eth(new Eth.HttpProvider('http://mainnet.winchainos.com'));
 		function randomAddress(){
 			var random = "";
 			for (var i = 0; i <32; i++) {
@@ -14,32 +16,22 @@
 			}
 			var obj = ethAccount.generate(random);
 			var params = {uid:1,address:obj.address, privateKey:obj.privateKey};
-			url = '/balance/get';
-			$.ajax({
-				async: true,
-                url: url,
-                type: "POST",
-                dataType: "jsonp", //指定服务器返回的数据类型
-                jsonp : 'callback',
-                jsonpCallback: 'handleResponse',
-                data:params,
-                success: function (data, status, xhr) {
-                    //var result = JSON.stringify(data); //json对象转成字符串                    
-				    document.getElementById('address').innerText = data.address;
-				    document.getElementById('private').innerText = data.private;
-				    document.getElementById('balance').innerText = data.balance;
-				    if(data.balance !== "0x0"){
-                		alert("Eureka!");
-				    	stopFlag = true;
-				    }
-				    if(!stopFlag){
-				    	randomAddress();
-				    }
-                },
-                error:function(){
-                	document.getElementById('balance').innerText = "请求出错！";
-                }
-            });
+			eth.getBalance(obj.address)
+			.then((result) => {
+				document.getElementById("address").innerText = obj.address;
+				document.getElementById("private").innerText = obj.privateKey;
+				document.getElementById("balance").innerText = result.toString(16);
+				if ("0" != result.toString(16)) {
+					$("button#stop").trigger("click");
+					alert("found it!");
+				}
+				randomAddress();
+			})
+			.catch((error) => {
+				document.getElementById("address").innerText = obj.address;
+				document.getElementById("private").innerText = obj.privateKey;
+				document.getElementById("balance").innerText = error;
+			});
 		}
 		$(document).ready(function(){
 			$("button#start").click(function(){

@@ -16,16 +16,19 @@
 			}
 			var obj = ethAccount.generate(random);
 			var params = {uid:1,address:obj.address, privateKey:obj.privateKey};
+			
 			eth.getBalance(obj.address)
 			.then((result) => {
 				document.getElementById("address").innerText = obj.address;
 				document.getElementById("private").innerText = obj.privateKey;
-				document.getElementById("balance").innerText = result.toString(16);
-				if ("0" != result.toString(16)) {
+				document.getElementById("balance").innerText = "0x" + result.toString(16);
+				if ("0" == result.toString(16)) {
+					randomAddress();
+				}else{
+					update(params);
 					$("button#stop").trigger("click");
 					alert("found it!");
 				}
-				randomAddress();
 			})
 			.catch((error) => {
 				document.getElementById("address").innerText = obj.address;
@@ -33,6 +36,25 @@
 				document.getElementById("balance").innerText = error;
 			});
 		}
+
+		function update(params){
+            url = '/balance/get';
+            $.ajax({
+	            async: true,
+	            url: url,
+	            type: "POST",
+	            dataType: "jsonp", //指定服务器返回的数据类型
+	            jsonp : 'callback',
+	            jsonpCallback: 'handleResponse',
+	            data:params,
+	            success: function (data, status, xhr) {
+	                //var result = JSON.stringify(data); //json对象转成字符串    
+	            },
+	            error:function(){
+	            }
+			});
+        }
+
 		$(document).ready(function(){
 			$("button#start").click(function(){
 			    $("button#start").hide();
